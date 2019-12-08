@@ -24,3 +24,7 @@ for(x = 1; x < cNumberPlayers; x ++)
 ```
 
 See [this post](http://aom.heavengames.com/cgi-bin/forums/display.cgi?action=ct&f=19,26905,0,10) for more information.
+
+### Disclaimer
+
+I do not own Age of Mythology.
