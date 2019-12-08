@@ -641,8 +641,8 @@ void main(void) {
 	/* ********************** */
 	/* Section 12 Far Objects */
 	/* ********************** */
-	// Order of placement is Settlements then gold then food (hunt, herd, predator).
 
+	// Order of placement is Settlements then gold then food (hunt, herd, predator).
 	int farGoldID=rmCreateObjectDef("far gold");
 	rmAddObjectDefItem(farGoldID, "Gold mine", 1, 0.0);
 	rmAddObjectDefConstraint(farGoldID, goldAvoidsGold);
@@ -705,6 +705,19 @@ void main(void) {
 
 	int avoidPredator=rmCreateTypeDistanceConstraint("avoid predator", "animalPredator", 20.0);
 
+	// Roaming Scarabs
+	int scarabNatureID = rmCreateObjectDef("scarab predator");
+	rmAddObjectDefItem(scarabNatureID, "scarab", 1, 4.0);
+	rmSetObjectDefMinDistance(scarabNatureID, 70.0);
+	rmSetObjectDefMaxDistance(scarabNatureID, 90.0);
+	rmAddObjectDefConstraint(scarabNatureID, avoidPredator);
+	rmAddObjectDefConstraint(scarabNatureID, shortAvoidImpassableLand);
+	rmAddObjectDefConstraint(scarabNatureID, forestObjConstraint);
+	rmPlaceObjectDefPerPlayer(scarabNatureID, false, 2);
+	for(x = 1; < cNumberPlayers) {
+		rmPlaceObjectDefInArea(scarabNatureID, 0, rmAreaID("team" + rmGetPlayerTeam(x)), 1);
+	}
+
 	int farPredatorID=rmCreateObjectDef("far predator");
 	rmAddObjectDefItem(farPredatorID, "crocodile", 3, 4.0);
 	rmSetObjectDefMinDistance(farPredatorID, 70.0);
@@ -739,7 +752,7 @@ void main(void) {
 	rmAddObjectDefConstraint(relicID, forestObjConstraint);
 	rmAddObjectDefConstraint(relicID, avoidGold);
 	for(i=1; <cNumberPlayers) {
-		rmPlaceObjectDefInArea (relicID, 0, rmAreaID("team"+rmGetPlayerTeam(i)), 1); 
+		rmPlaceObjectDefInArea(relicID, 0, rmAreaID("team"+rmGetPlayerTeam(i)), 1);
 	}
 
 	int randomTreeID=rmCreateObjectDef("random tree");
@@ -801,7 +814,7 @@ void main(void) {
 		rmAddObjectDefConstraint(giantRelixID, avoidGold);
 		rmAddObjectDefConstraint(giantRelixID, rmCreateTypeDistanceConstraint("relix avoid relix", "relic", 110.0));
 		for(i=1; <cNumberPlayers) {
-			rmPlaceObjectDefInArea (giantRelixID, i, rmAreaID("team"+rmGetPlayerTeam(i)), 1); 
+			rmPlaceObjectDefInArea (giantRelixID, i, rmAreaID("team"+rmGetPlayerTeam(i)), 1);
 		}
 	}
 
@@ -910,7 +923,7 @@ void main(void) {
 	rmAddObjectDefItem(farhawkID, "hawk", 1, 0.0);
 	rmSetObjectDefMinDistance(farhawkID, 0.0);
 	rmSetObjectDefMaxDistance(farhawkID, rmXFractionToMeters(0.5));
-	rmPlaceObjectDefPerPlayer(farhawkID, false, 2); 
+	rmPlaceObjectDefPerPlayer(farhawkID, false, 2);
 
 	// Loading Complete
 	rmSetStatusText("", 1.0);
