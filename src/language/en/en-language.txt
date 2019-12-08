@@ -1,0 +1,3 @@
+// CUSTOM MAPS
+90007		"Scarab"
+90008		"Sandstone cliffs strangle expanses of desert where deadly scarabs lurk."

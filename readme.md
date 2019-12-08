@@ -9,6 +9,8 @@ Scripts for any random maps that you want to try (both the `xml` and `xs` files)
 
 The `cof89_lib.xs` file is a library that is used by all random maps and should also be installed into the same location.
 
+Append the contents of the `en-language.txt` file to the existing file in the `/language/en/` directory.
+
 ### Notes on XS
 
 For those unfamiliar, this is basically C++ but with some mandatory syntax (eg: _for_ loops);
