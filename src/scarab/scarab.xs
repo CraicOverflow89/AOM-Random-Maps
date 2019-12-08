@@ -318,12 +318,7 @@ void main(void) {
 
 	// Gold Placement
 	int startingGoldFairLocID = -1;
-	if(rmRandFloat(0, 1) > 0.5) {
-		startingGoldFairLocID = rmAddFairLoc("Starting Gold", true, false, 20, 21, 0, 15);
-	}
-	else {
-		startingGoldFairLocID = rmAddFairLoc("Starting Gold", false, false, 20, 21, 0, 15);
-	}
+	startingGoldFairLocID = rmAddFairLoc("Starting Gold", randomSuccess(), false, 20, 21, 0, 15);
 	if(rmPlaceFairLocs()) {
 		int startingGoldID = rmCreateObjectDef("Starting Gold");
 		rmAddObjectDefItem(startingGoldID, "Gold Mine Small", 1, 0.0);

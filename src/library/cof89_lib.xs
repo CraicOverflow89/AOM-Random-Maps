@@ -33,11 +33,34 @@ int initMap(int tiles = 9000) {
 }
 
 /**
+ * Limits a value to within a minimum and maximum value
+ *
+ * @param value The value to limit
+ * @param min, max The limits of the value to enforce
+ * @returns float
+ */
+float limitFloat(float value = 0.0, float min = 0.0, float max = 1.0) {
+	if(value < min) return (min);
+	if(value > max) return (max);
+	return (value);
+}
+
+/**
  * Updates the loading status
  *
  * @param value Completion percentage
  * @returns void
  */
 void loadStatus(float value = 0.0) {
-	rmSetStatusText("", value);
+	rmSetStatusText("", limitFloat(value));
+}
+
+/**
+ * Performs a random check for success
+ *
+ * @param percent The percentage chance of success
+ * returns bool
+ */
+bool randomSuccess(float percent = 0.5) {
+	return (rmRandFloat(0, 1) > limitFloat(percent));
 }
