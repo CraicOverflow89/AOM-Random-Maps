@@ -14,28 +14,12 @@ void main(void) {
 	/* Section 1 Map Initialization */
 	/* **************************** */
 
-	// Map Size
-	int mapSizeMultiplier = 1;
-	int playerTiles = 9000;
-	if(cMapSize == 1) {
-		playerTiles = 11700;
-		rmEchoInfo("Large map");
-	}
-	else if(cMapSize == 2) {
-		playerTiles = 23400;
-		rmEchoInfo("Giant map");
-		mapSizeMultiplier = 2;
-	}
-	int sizeL = 2.22 * sqrt(cNumberNonGaiaPlayers * playerTiles);
-	int sizeW = 1.8 * sqrt(cNumberNonGaiaPlayers * playerTiles);
-	rmEchoInfo("Map size=" + sizeL + "m x " + sizeW + "m");
-	rmSetMapSize(sizeL, sizeW);
-
-	// Configure Sea
-	rmSetSeaLevel(0.0);
+	// Initialise Map
+	int mapSizeMultiplier = initMap();
 
 	// Default Terrain
 	rmTerrainInitialize("cliffEgyptianA", 12.0);
+	rmSetSeaLevel(0.0);
 
 	// Set Lighting
 	rmSetLightingSet("anatolia");
