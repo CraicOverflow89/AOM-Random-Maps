@@ -392,7 +392,7 @@ void main(void) {
 		for(p = 1; <= cNumberNonGaiaPlayers) {
 
 			// Close Settlement
-			closeID = rmCreateObjectDef("close settlement"+p);
+			closeID = rmCreateObjectDef("close settlement" + p);
 			rmAddObjectDefItem(closeID, "Settlement", 1, 0.0);
 			rmAddObjectDefConstraint(closeID, TCavoidSettlement);
 			rmAddObjectDefConstraint(closeID, TCavoidStart);
@@ -426,11 +426,11 @@ void main(void) {
 	if(cMapSize == 2) {
 
 		// Close FairLocs
-		id = rmAddFairLoc("Settlement", false, true,  rmXFractionToMeters(0.3), rmXFractionToMeters(0.4), 70, 16);
+		id = rmAddFairLoc("Settlement", false, true, rmXFractionToMeters(0.3), rmXFractionToMeters(0.4), 70, 16);
 		rmAddFairLocConstraint(id, TCavoidSettlement);
 		rmAddFairLocConstraint(id, TCavoidStart);
 		rmAddFairLocConstraint(id, TCavoidImpassableLand);
-		id = rmAddFairLoc("Settlement", false, false,  rmXFractionToMeters(0.35), rmXFractionToMeters(0.4), 70, 16);
+		id = rmAddFairLoc("Settlement", false, false, rmXFractionToMeters(0.35), rmXFractionToMeters(0.4), 70, 16);
 		rmAddFairLocConstraint(id, TCavoidSettlement);
 		rmAddFairLocConstraint(id, TCavoidStart);
 		rmAddFairLocConstraint(id, TCavoidImpassableLand);
@@ -476,7 +476,7 @@ void main(void) {
 				rmAddObjectDefConstraint(farID, TCavoidSettlement);
 				for(attempt = 6; < 15) {
 					rmPlaceObjectDefAtLoc(farID, p, rmGetPlayerX(p), rmGetPlayerZ(p), 1);
-					if(rmGetNumberUnitsPlaced(farID) > 0){
+					if(rmGetNumberUnitsPlaced(farID) > 0) {
 						break;
 					}
 					rmSetObjectDefMaxDistance(farID, 10 * attempt);
@@ -533,7 +533,7 @@ void main(void) {
 	rmAddObjectDefConstraint(startingBerryID, chickenShortAvoidsStartingGoldMilky);
 	rmAddObjectDefConstraint(startingBerryID, getOffTheTC);
 	for(x = 1; <cNumberPlayers) {
-		if(rmRandFloat(0.0, 1.0) < 0.5) {
+		if(randomSuccess()) {
 			rmPlaceObjectDefAtLoc(startingChickenID, 0, rmGetPlayerX(x), rmGetPlayerZ(x));
 		}
 		else {
@@ -563,7 +563,7 @@ void main(void) {
 
 	// Create Forests
 	int maxNum = 4;
-	for(p=1; <= cNumberNonGaiaPlayers) {
+	for(p = 1; <= cNumberNonGaiaPlayers) {
 		placePointsCircleCustom(rmXMetersToFraction(42.0), maxNum, -1.0, -1.0, rmGetPlayerX(p), rmGetPlayerZ(p), false, false);
 		int skip = rmRandInt(1, maxNum);
 		for(x = 1; <= maxNum) {
@@ -716,7 +716,7 @@ void main(void) {
 	rmPlaceObjectDefPerPlayer(farGoatsID, false, 1);
 
 	// Predator Constraint
-	int avoidPredator=rmCreateTypeDistanceConstraint("avoid predator", "animalPredator", 20.0);
+	int avoidPredator = rmCreateTypeDistanceConstraint("avoid predator", "animalPredator", 20.0);
 
 	// Create Scarabs
 	int scarabNatureID = rmCreateObjectDef("scarab predator");
@@ -767,7 +767,7 @@ void main(void) {
 	rmAddObjectDefConstraint(relicID, farStartingSettleConstraint);
 	rmAddObjectDefConstraint(relicID, forestObjConstraint);
 	rmAddObjectDefConstraint(relicID, avoidGold);
-	for(x = 1; <cNumberPlayers) {
+	for(x = 1; < cNumberPlayers) {
 		rmPlaceObjectDefInArea(relicID, 0, rmAreaID("team" + rmGetPlayerTeam(x)), 1);
 	}
 
