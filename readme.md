@@ -5,7 +5,9 @@ Random map scripts for Age of Mythology.
 
 ### Installation
 
-Scripts should be installed into the `/rm2/versionX/` directory (where X is your latest version).
+Scripts for any random maps that you want to try (both the `xml` and `xs` files) should be installed into the `/rm2/versionX/` directory (where X is your latest version).
+
+The `cof89_lib.xs` file is a library that is used by all random maps and should also be installed into the same location.
 
 ### Notes on XS
 

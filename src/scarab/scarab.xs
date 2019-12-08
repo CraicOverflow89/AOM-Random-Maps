@@ -3,10 +3,12 @@
 // Based on Jotunheim
 
 include "MmM_FE_lib.xs";
+include "cof89_lib.xs";
+
 void main(void) {
 
 	// Loading Status
-	rmSetStatusText("", 0.01);
+	loadStatus(0.01);
 
 	/* **************************** */
 	/* Section 1 Map Initialization */
@@ -39,7 +41,7 @@ void main(void) {
 	rmSetLightingSet("anatolia");
 
 	// Loading Status
-	rmSetStatusText("", 0.07);
+	loadStatus(0.07);
 
 	/* ***************** */
 	/* Section 2 Classes */
@@ -53,7 +55,7 @@ void main(void) {
 	int teamClass = rmDefineClass("teamClass");
 
 	// Loading Status
-	rmSetStatusText("", 0.13);
+	loadStatus(0.13);
 
 	/* **************************** */
 	/* Section 3 Global Constraints */
@@ -64,7 +66,7 @@ void main(void) {
 	int shortAvoidImpassableLand = rmCreateTerrainDistanceConstraint("short avoid impassable land", "land", false, 6.0);
 
 	// Loading Status
-	rmSetStatusText("", 0.20);
+	loadStatus(0.20);
 
 	/* ********************* */
 	/* Section 4 Map Outline */
@@ -205,7 +207,7 @@ void main(void) {
 	}
 
 	// Loading Status
-	rmSetStatusText("", 0.26);
+	loadStatus(0.26);
 
 	/* ********************** */
 	/* Section 5 Player Areas */
@@ -238,7 +240,7 @@ void main(void) {
 	rmBuildAllAreas();
 
 	// Loading Status
-	rmSetStatusText("", 0.33);
+	loadStatus(0.33);
 
 	/* *********************** */
 	/* Section 6 Map Specifics */
@@ -309,7 +311,7 @@ void main(void) {
 	failCount = 0;
 
 	// Loading Status
-	rmSetStatusText("", 0.40);
+	loadStatus(0.40);
 
 	/* **************************** */
 	/* Section 7 Object Constraints */
@@ -324,7 +326,7 @@ void main(void) {
 	int forestObjConstraint = rmCreateTypeDistanceConstraint("forest obj", "all", 6.0);
 
 	// Loading Status
-	rmSetStatusText("", 0.46);
+	loadStatus(0.46);
 
 	/* ********************************* */
 	/* Section 8 Fair Location Placement */
@@ -505,7 +507,7 @@ void main(void) {
 	}
 
 	// Loading Status
-	rmSetStatusText("", 0.53);
+	loadStatus(0.53);
 
 	/* ************************** */
 	/* Section 9 Starting Objects */
@@ -569,7 +571,7 @@ void main(void) {
 	rmPlaceObjectDefPerPlayer(stragglerTreeID, false, 3);
 
 	// Loading Status
-	rmSetStatusText("", 0.60);
+	loadStatus(0.60);
 
 	/* *************************** */
 	/* Section 10 Starting Forests */
@@ -630,7 +632,7 @@ void main(void) {
 	}
 
 	// Loading Status
-	rmSetStatusText("", 0.66);
+	loadStatus(0.66);
 
 	/* ************************* */
 	/* Section 11 Medium Objects */
@@ -649,9 +651,8 @@ void main(void) {
 	rmPlaceObjectDefPerPlayer(mediumGoldID, false);
 
 	// Create Gazelle
-	int numHuntable = rmRandInt(6, 8);
 	int mediumGazelleID = rmCreateObjectDef("medium deer");
-	rmAddObjectDefItem(mediumGazelleID, "gazelle", numHuntable, 3.0);
+	rmAddObjectDefItem(mediumGazelleID, "gazelle", rmRandInt(6, 8), 3.0);
 	rmSetObjectDefMinDistance(mediumGazelleID, 50.0);
 	rmSetObjectDefMaxDistance(mediumGazelleID, 55.0);
 	rmAddObjectDefConstraint(mediumGazelleID, avoidFood);
@@ -661,7 +662,7 @@ void main(void) {
 	rmPlaceObjectDefPerPlayer(mediumGazelleID, false);
 
 	// Loading Status
-	rmSetStatusText("", 0.73);
+	loadStatus(0.73);
 
 	/* ********************** */
 	/* Section 12 Far Objects */
@@ -680,7 +681,7 @@ void main(void) {
 		rmPlaceObjectDefInArea(farGoldID, x, rmAreaID("team" + rmGetPlayerTeam(x)), goldNum);
 	}
 
-	// Create Huntable
+	// Create Huntable 1
 	int farAvoidFood = rmCreateTypeDistanceConstraint("avoid huntable", "food", 30.0);
 	int bonusHuntableID = rmCreateObjectDef("bonus huntable");
 	float bonusChance = rmRandFloat(0, 1);
@@ -703,7 +704,7 @@ void main(void) {
 		rmPlaceObjectDefInArea(bonusHuntableID, 0, rmAreaID("team" + rmGetPlayerTeam(x)), 1);
 	}
 
-	// Create Huntable
+	// Create Huntable 2
 	int bonusHuntableID2 = rmCreateObjectDef("bonus huntable 2");
 	float bonusChance3 = rmRandFloat(0, 1);
 	if(bonusChance3 < 0.3) {
@@ -801,7 +802,7 @@ void main(void) {
 	rmPlaceObjectDefAtLoc(randomTreeID, 0, 0.5, 0.5, 20 * cNumberNonGaiaPlayers);
 
 	// Loading Status
-	rmSetStatusText("", 0.80);
+	loadStatus(0.80);
 
 	/* ************************ */
 	/* Section 13 Giant Objects */
@@ -865,7 +866,7 @@ void main(void) {
 	}
 
 	// Loading Status
-	rmSetStatusText("", 0.86);
+	loadStatus(0.86);
 
 	/* ************************************ */
 	/* Section 14 Map Fill Cliffs & Forests */
@@ -921,12 +922,11 @@ void main(void) {
 	}
 
 	// Loading Status
-	rmSetStatusText("", 0.93);
+	loadStatus(0.93);
 
 	/* ********************************* */
 	/* Section 15 Beautification Objects */
 	/* ********************************* */
-
 
 	// Create Contraints
 	int avoidAll = rmCreateTypeDistanceConstraint("avoid all", "all", 6.0);
@@ -983,5 +983,5 @@ void main(void) {
 	rmPlaceObjectDefPerPlayer(farhawkID, false, 2);
 
 	// Loading Complete
-	rmSetStatusText("", 1.0);
+	loadStatus(1.0);
 }
