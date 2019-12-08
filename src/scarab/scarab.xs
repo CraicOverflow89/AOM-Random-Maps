@@ -24,13 +24,18 @@ void main(void) {
 		rmEchoInfo("Giant map");
 		mapSizeMultiplier = 2;
 	}
-
 	int sizeL = 2.22 * sqrt(cNumberNonGaiaPlayers * playerTiles);
 	int sizeW = 1.8 * sqrt(cNumberNonGaiaPlayers * playerTiles);
 	rmEchoInfo("Map size=" + sizeL + "m x " + sizeW + "m");
 	rmSetMapSize(sizeL, sizeW);
+
+	// Configure Sea
 	rmSetSeaLevel(0.0);
+
+	// Default Terrain
 	rmTerrainInitialize("cliffEgyptianA", 12.0);
+
+	// Set Lighting
 	rmSetLightingSet("anatolia");
 
 	// Loading Status
@@ -40,42 +45,42 @@ void main(void) {
 	/* Section 2 Classes */
 	/* ***************** */
 
-	int classForest=rmDefineClass("forest");
-	int classPlayer=rmDefineClass("player");
+	int classForest = rmDefineClass("forest");
+	int classPlayer = rmDefineClass("player");
 	int classStartingSettlement = rmDefineClass("starting settlement");
-	int connectionClass=rmDefineClass("connection");
-	int patchClass=rmDefineClass("patchClass");
-	int teamClass=rmDefineClass("teamClass");
+	int connectionClass = rmDefineClass("connection");
+	int patchClass = rmDefineClass("patchClass");
+	int teamClass = rmDefineClass("teamClass");
 
 	// Loading Status
-	rmSetStatusText("",0.13);
+	rmSetStatusText("", 0.13);
 
 	/* **************************** */
 	/* Section 3 Global Constraints */
 	/* **************************** */
+
 	// For Areas and Objects. Local Constraints should be defined right before they are used.
+	int playerConstraint = rmCreateClassDistanceConstraint("stay away from players", classPlayer, 10.0);
+	int shortAvoidImpassableLand = rmCreateTerrainDistanceConstraint("short avoid impassable land", "land", false, 6.0);
 
-	int playerConstraint=rmCreateClassDistanceConstraint("stay away from players", classPlayer, 10.0);
-	int shortAvoidImpassableLand=rmCreateTerrainDistanceConstraint("short avoid impassable land", "land", false, 6.0);
-
-	rmSetStatusText("",0.20);
+	// Loading Status
+	rmSetStatusText("", 0.20);
 
 	/* ********************* */
 	/* Section 4 Map Outline */
 	/* ********************* */
 
-	int baseMountainWidth = 0;
-	int connectionWidth = 0;
-	if (cNumberTeams < 3){
-		baseMountainWidth = 30;
-		connectionWidth = 30;
-	} else {
+	// Mountain Width
+	int baseMountainWidth = 30;
+	int connectionWidth = 30;
+	if(cNumberTeams > 2) {
 		baseMountainWidth = 20;
 		connectionWidth = 25;
 	}
-	int teamConstraint=rmCreateClassDistanceConstraint("how wide the mountain is", teamClass, baseMountainWidth);
+	int teamConstraint = rmCreateClassDistanceConstraint("how wide the mountain is", teamClass, baseMountainWidth);
 
-	int connectionID=rmCreateConnection("passes");
+	// Main Connection
+	int connectionID = rmCreateConnection("passes");
 	rmAddConnectionTerrainReplacement(connectionID, "cliffEgyptianA", "SandA");
 	rmAddConnectionTerrainReplacement(connectionID, "cliffEgyptianB", "SandA");
 	rmSetConnectionType(connectionID, cConnectAreas, false, 1.0);
@@ -88,26 +93,25 @@ void main(void) {
 	rmSetConnectionHeightBlend(connectionID, 2);
 	rmAddConnectionToClass(connectionID, connectionClass);
 
-	/* Add chance for another connection in 2 team games. The more players, the less the chance */
+	// Additional Connection
 	int secondConnectionExists = 0;
 	float secondConnectionChance = rmRandFloat(0.0, 1.0);
 	if(cNumberTeams < 3) {
-		if(cNumberNonGaiaPlayers <4) {
+		if(cNumberNonGaiaPlayers < 4) {
 			if(secondConnectionChance < 0.8) {
 				secondConnectionExists = 1;
 			}
-		} else {
+		}
+		else {
 			if(secondConnectionChance < 0.6) {
 				secondConnectionExists = 1;
 			}
 		}
 	}
-
-	rmEchoInfo("secondConnectionChance "+secondConnectionChance+ "secondConnectionExists "+secondConnectionExists);
-	int connectionEdgeConstraint=rmCreateBoxConstraint("connections avoid edge of map", rmXTilesToFraction(16), rmZTilesToFraction(16), 1.0-rmXTilesToFraction(16), 1.0-rmZTilesToFraction(16));
-
-	if(secondConnectionExists == 1){
-		int alternateConnection=rmCreateConnection("alternate passes");
+	rmEchoInfo("secondConnectionChance " + secondConnectionChance + "secondConnectionExists " + secondConnectionExists);
+	int connectionEdgeConstraint = rmCreateBoxConstraint("connections avoid edge of map", rmXTilesToFraction(16), rmZTilesToFraction(16), 1.0 - rmXTilesToFraction(16), 1.0 - rmZTilesToFraction(16));
+	if(secondConnectionExists == 1) {
+		int alternateConnection = rmCreateConnection("alternate passes");
 		rmAddConnectionTerrainReplacement(alternateConnection, "cliffEgyptianA", "SandA");
 		rmAddConnectionTerrainReplacement(alternateConnection, "cliffEgyptianB", "SandA");
 		rmSetConnectionType(alternateConnection, cConnectAreas, false, 1.0);
@@ -125,23 +129,25 @@ void main(void) {
 		rmAddConnectionToClass(alternateConnection, connectionClass);
 	}
 
+	// Player Placement
 	rmPlacePlayersCircular(0.30, 0.40, rmDegreesToRadians(4.0));
 	rmRecordPlayerLocations();
 
-	int teamEdgeConstraint=rmCreateBoxConstraint("team edge of map", rmXTilesToFraction(4), rmZTilesToFraction(4), 1.0-rmXTilesToFraction(4), 1.0-rmZTilesToFraction(4));
-	float teamPercentArea = 0.80/cNumberTeams;
-	if(cNumberNonGaiaPlayers < 4){
-		teamPercentArea = 0.75/cNumberTeams;
+	// Team Contraints
+	int teamEdgeConstraint = rmCreateBoxConstraint("team edge of map", rmXTilesToFraction(4), rmZTilesToFraction(4), 1.0 - rmXTilesToFraction(4), 1.0 - rmZTilesToFraction(4));
+	float teamPercentArea = 0.80 / cNumberTeams;
+	if(cNumberNonGaiaPlayers < 4) {
+		teamPercentArea = 0.75 / cNumberTeams;
 	}
-
-	float percentPerPlayer = 0.75/cNumberNonGaiaPlayers;
+	float percentPerPlayer = 0.75 / cNumberNonGaiaPlayers;
 	float teamSize = 0;
+	for(i = 0; < cNumberTeams) {
 
-	for(i=0; <cNumberTeams){
-		int teamID=rmCreateArea("team"+i);
+		// Team Area
+		int teamID = rmCreateArea("team" + i);
 		rmSetTeamArea(i, teamID);
 		teamSize = percentPerPlayer*rmGetNumberPlayersOnTeam(i);
-		rmSetAreaSize(teamID, teamSize*0.9, teamSize*1.1);
+		rmSetAreaSize(teamID, teamSize * 0.9, teamSize * 1.1);
 		rmSetAreaWarnFailure(teamID, false);
 		rmSetAreaTerrainType(teamID, "SandA");
 		rmAddAreaTerrainLayer(teamID, "cliffEgyptianB", 2, 6);
@@ -162,13 +168,14 @@ void main(void) {
 		if(secondConnectionExists == 1.0) {
 			rmAddConnectionArea(alternateConnection, teamID);
 		}
-		rmEchoInfo("Team area"+i);
+		rmEchoInfo("Team area" + i);
 	}
 
-	int patchConstraint=rmCreateClassDistanceConstraint("patch vs patch", patchClass, 10);
+	// Patch Constraints
+	int patchConstraint = rmCreateClassDistanceConstraint("patch vs patch", patchClass, 10);
 	int failCount = 0;
-	for(j=0; <cNumberNonGaiaPlayers*60*mapSizeMultiplier){
-		int rockPatch=rmCreateArea("rock patch"+j);
+	for(j = 0; < cNumberNonGaiaPlayers * 60 * mapSizeMultiplier) {
+		int rockPatch=rmCreateArea("rock patch" + j);
 		rmSetAreaSize(rockPatch, rmAreaTilesToFraction(50), rmAreaTilesToFraction(100));
 		rmSetAreaWarnFailure(rockPatch, false);
 		rmSetAreaBaseHeight(rockPatch, rmRandFloat(8.0, 10.0));
@@ -177,49 +184,50 @@ void main(void) {
 		rmSetAreaMinBlobs(rockPatch, 1);
 		rmSetAreaMaxBlobs(rockPatch, 3);
 		rmSetAreaMinBlobDistance(rockPatch, 5.0);
-		rmSetAreaMaxBlobDistance(rockPatch, 5.0*mapSizeMultiplier);
+		rmSetAreaMaxBlobDistance(rockPatch, 5.0 * mapSizeMultiplier);
 		rmSetAreaCoherence(rockPatch, 0.3);
-
-		if(rmBuildArea(rockPatch)==false){
-			// Stop trying once we fail 3 times in a row.
+		if(rmBuildArea(rockPatch )== false) {
 			failCount++;
-			if(failCount==3*mapSizeMultiplier) {
+			if(failCount == 3 * mapSizeMultiplier) {
 				break;
 			}
-		} else {
-			failCount=0;
+		}
+		else {
+			failCount = 0;
 		}
 	}
 
+	// Build Areas
 	rmBuildAllAreas();
 	rmBuildConnection(connectionID);
 	if(secondConnectionExists == 1.0) {
 		rmBuildConnection(alternateConnection);
 	}
 
-	rmSetStatusText("",0.26);
+	// Loading Status
+	rmSetStatusText("", 0.26);
 
 	/* ********************** */
 	/* Section 5 Player Areas */
 	/* ********************** */
 
+	// Team Spacing
 	rmSetTeamSpacingModifier(0.75);
-	float playerFraction=rmAreaTilesToFraction(2500);
+	float playerFraction = rmAreaTilesToFraction(2500);
 
-	for(i=1; <cNumberPlayers){
-		int id=rmCreateArea("Player"+i, rmAreaID("team"+rmGetPlayerTeam(i)));
-		rmEchoInfo("Player"+i+"team"+rmGetPlayerTeam(i));
+	// Player Areas
+	for(i = 1; <cNumberPlayers){
+		int id = rmCreateArea("Player" + i, rmAreaID("team" + rmGetPlayerTeam(i)));
+		rmEchoInfo("Player" + i + "team" + rmGetPlayerTeam(i));
 		rmSetPlayerArea(i, id);
-
-		rmSetAreaSize(id, 0.9*playerFraction, 1.1*playerFraction);
+		rmSetAreaSize(id, 0.9 * playerFraction, 1.1 * playerFraction);
 		rmAddAreaToClass(id, classPlayer);
 		rmSetAreaWarnFailure(id, false);
-		rmSetAreaMinBlobs(id, 1*mapSizeMultiplier);
-		rmSetAreaMaxBlobs(id, 5*mapSizeMultiplier);
+		rmSetAreaMinBlobs(id, 1 * mapSizeMultiplier);
+		rmSetAreaMaxBlobs(id, 5 * mapSizeMultiplier);
 		rmSetAreaMinBlobDistance(id, 16.0);
-		rmSetAreaMaxBlobDistance(id, 40.0*mapSizeMultiplier);
+		rmSetAreaMaxBlobDistance(id, 40.0 * mapSizeMultiplier);
 		rmSetAreaCoherence(id, 0.0);
-
 		rmAddAreaConstraint(id, playerConstraint);
 		rmAddAreaConstraint(id, shortAvoidImpassableLand);
 		rmSetAreaLocPlayer(id, i);
@@ -229,53 +237,54 @@ void main(void) {
 	}
 	rmBuildAllAreas();
 
-	// Loading bar 33% 
-	rmSetStatusText("",0.33);
+	// Loading Status
+	rmSetStatusText("", 0.33);
 
 	/* *********************** */
 	/* Section 6 Map Specifics */
 	/* *********************** */
 
-	for(i=1; <cNumberPlayers){
-		for(j=0; <3*mapSizeMultiplier){
-			int id3=rmCreateArea("snow patch"+i +j, rmAreaID("player"+i));
-			rmSetAreaSize(id3, rmAreaTilesToFraction(10*mapSizeMultiplier), rmAreaTilesToFraction(80*mapSizeMultiplier));
+	// SandB Patches
+	for(x = 1; < cNumberPlayers) {
+		for(y = 0; < 3 * mapSizeMultiplier) {
+			int id3 = rmCreateArea("sand b patch" + x + y, rmAreaID("player" + x));
+			rmSetAreaSize(id3, rmAreaTilesToFraction(10 * mapSizeMultiplier), rmAreaTilesToFraction(80 * mapSizeMultiplier));
 			rmSetAreaWarnFailure(id3, false);
 			rmSetAreaTerrainType(id3, "SandB");
 			rmAddAreaConstraint(id3, shortAvoidImpassableLand);
-			rmSetAreaMinBlobs(id3, 1*mapSizeMultiplier);
-			rmSetAreaMaxBlobs(id3, 5*mapSizeMultiplier);
+			rmSetAreaMinBlobs(id3, 1 * mapSizeMultiplier);
+			rmSetAreaMaxBlobs(id3, 5 * mapSizeMultiplier);
 			rmSetAreaMinBlobDistance(id3, 5.0);
-			rmSetAreaMaxBlobDistance(id3, 20.0*mapSizeMultiplier);
+			rmSetAreaMaxBlobDistance(id3, 20.0 * mapSizeMultiplier);
 			rmSetAreaCoherence(id3, 0.0);
 			rmBuildArea(id3);
 		}
 	}
 
-	for(i=1; <cNumberPlayers){
-		for(j=0; <3*mapSizeMultiplier){
-			int id2=rmCreateArea("grass patch"+i +j, rmAreaID("player"+i));
-			rmSetAreaSize(id2, rmAreaTilesToFraction(400*mapSizeMultiplier), rmAreaTilesToFraction(600*mapSizeMultiplier));
+	// SandC Patches
+	for(x = 1; < cNumberPlayers) {
+		for(y = 0; < 3 * mapSizeMultiplier) {
+			int id2 = rmCreateArea("sand c patch" + x + y, rmAreaID("player" + x));
+			rmSetAreaSize(id2, rmAreaTilesToFraction(400 * mapSizeMultiplier), rmAreaTilesToFraction(600 * mapSizeMultiplier));
 			rmSetAreaWarnFailure(id2, false);
 			rmSetAreaTerrainType(id2, "SandC");
 			rmAddAreaTerrainLayer(id2, "SandC", 0, 2);
 			rmAddAreaConstraint(id2, shortAvoidImpassableLand);
-			rmSetAreaMinBlobs(id2, 1*mapSizeMultiplier);
-			rmSetAreaMaxBlobs(id2, 5*mapSizeMultiplier);
+			rmSetAreaMinBlobs(id2, 1 * mapSizeMultiplier);
+			rmSetAreaMaxBlobs(id2, 5 * mapSizeMultiplier);
 			rmSetAreaMinBlobDistance(id2, 5.0);
-			rmSetAreaMaxBlobDistance(id2, 20.0*mapSizeMultiplier);
+			rmSetAreaMaxBlobDistance(id2, 20.0 * mapSizeMultiplier);
 			rmSetAreaCoherence(id2, 0.0);
-
 			rmBuildArea(id2);
 		}
 	}
 
-	int numTries=10*cNumberNonGaiaPlayers;
-	int avoidBuildings=rmCreateTypeDistanceConstraint("avoid buildings", "Building", 20.0);
-	failCount=0;
-
-	for(i=0; <numTries){
-		int elevID=rmCreateArea("wrinkle"+i);
+	// Create Wrinkles
+	int numTries = 10 * cNumberNonGaiaPlayers;
+	int avoidBuildings = rmCreateTypeDistanceConstraint("avoid buildings", "Building", 20.0);
+	failCount = 0;
+	for(x = 0; < numTries) {
+		int elevID=rmCreateArea("wrinkle" + x);
 		rmSetAreaSize(elevID, rmAreaTilesToFraction(15), rmAreaTilesToFraction(120));
 		rmSetAreaWarnFailure(elevID, false);
 		rmSetAreaBaseHeight(elevID, rmRandFloat(1.0, 3.0));
@@ -287,85 +296,85 @@ void main(void) {
 		rmSetAreaCoherence(elevID, 0.0);
 		rmAddAreaConstraint(elevID, avoidBuildings);
 		rmAddAreaConstraint(elevID, shortAvoidImpassableLand);
-
-		if(rmBuildArea(elevID)==false){
-			// Stop trying once we fail 10 times in a row.
-			failCount++;
-			if(failCount==10) {
+		if(rmBuildArea(elevID) == false) {
+			failCount ++;
+			if(failCount == 10) {
 				break;
 			}
-		} else {
-			failCount=0;
+		}
+		else {
+			failCount = 0;
 		}
 	}
-	failCount=0;
+	failCount = 0;
 
-	rmSetStatusText("",0.40);
+	// Loading Status
+	rmSetStatusText("", 0.40);
 
 	/* **************************** */
 	/* Section 7 Object Constraints */
 	/* **************************** */
-	// If a constraint is used in multiple sections then it is listed here.
 
-	int avoidFood=rmCreateTypeDistanceConstraint("avoid food", "food", 15.0);
-	int shortAvoidSettlement=rmCreateTypeDistanceConstraint("short avoid settlement", "AbstractSettlement", 10.0);
-	int farStartingSettleConstraint=rmCreateClassDistanceConstraint("objects avoid player TCs", rmClassID("starting settlement"), 40.0);
-	int avoidGold=rmCreateTypeDistanceConstraint("avoid gold", "gold", 30.0);
-	int goldAvoidsGold=rmCreateTypeDistanceConstraint("gold avoid gold", "gold", 40.0);
-	int forestObjConstraint=rmCreateTypeDistanceConstraint("forest obj", "all", 6.0);
+	// Create Contraints
+	int avoidFood = rmCreateTypeDistanceConstraint("avoid food", "food", 15.0);
+	int shortAvoidSettlement = rmCreateTypeDistanceConstraint("short avoid settlement", "AbstractSettlement", 10.0);
+	int farStartingSettleConstraint = rmCreateClassDistanceConstraint("objects avoid player TCs", rmClassID("starting settlement"), 40.0);
+	int avoidGold = rmCreateTypeDistanceConstraint("avoid gold", "gold", 30.0);
+	int goldAvoidsGold = rmCreateTypeDistanceConstraint("gold avoid gold", "gold", 40.0);
+	int forestObjConstraint = rmCreateTypeDistanceConstraint("forest obj", "all", 6.0);
 
-	rmSetStatusText("",0.46);
+	// Loading Status
+	rmSetStatusText("", 0.46);
 
 	/* ********************************* */
 	/* Section 8 Fair Location Placement */
 	/* ********************************* */
 
+	// Gold Placement
 	int startingGoldFairLocID = -1;
-	if(rmRandFloat(0,1) > 0.5){
+	if(rmRandFloat(0, 1) > 0.5) {
 		startingGoldFairLocID = rmAddFairLoc("Starting Gold", true, false, 20, 21, 0, 15);
-	} else {
+	}
+	else {
 		startingGoldFairLocID = rmAddFairLoc("Starting Gold", false, false, 20, 21, 0, 15);
 	}
-	if(rmPlaceFairLocs()){
-		int startingGoldID=rmCreateObjectDef("Starting Gold");
+	if(rmPlaceFairLocs()) {
+		int startingGoldID = rmCreateObjectDef("Starting Gold");
 		rmAddObjectDefItem(startingGoldID, "Gold Mine Small", 1, 0.0);
-		for(i=1; <cNumberPlayers){
-			for(j=0; <rmGetNumberFairLocs(i)){
-				rmPlaceObjectDefAtLoc(startingGoldID, i, rmFairLocXFraction(i, j), rmFairLocZFraction(i, j), 1);
+		for(x = 1; < cNumberPlayers) {
+			for(y = 0; < rmGetNumberFairLocs(x)) {
+				rmPlaceObjectDefAtLoc(startingGoldID, x, rmFairLocXFraction(x, y), rmFairLocZFraction(x, y), 1);
 			}
 		}
 	}
 	rmResetFairLocs();
 
-	int startingSettlementID=rmCreateObjectDef("starting settlement");
+	// Starting Settlement
+	int startingSettlementID = rmCreateObjectDef("starting settlement");
 	rmAddObjectDefItem(startingSettlementID, "Settlement Level 1", 1, 0.0);
 	rmAddObjectDefToClass(startingSettlementID, rmClassID("starting settlement"));
 	rmSetObjectDefMinDistance(startingSettlementID, 0.0);
 	rmSetObjectDefMaxDistance(startingSettlementID, 0.0);
 	rmPlaceObjectDefPerPlayer(startingSettlementID, true);
-
 	int closeID = -1;
 	int farID = -1;
-
 	int TCavoidSettlement = rmCreateTypeDistanceConstraint("TC avoid TC by long distance", "AbstractSettlement", 50.0);
 	int TCavoidStart = rmCreateClassDistanceConstraint("TC avoid starting by long distance", classStartingSettlement, 50.0);
 	int TCavoidWater = rmCreateTerrainDistanceConstraint("TC avoid water", "Water", true, 30.0);
 	int TCavoidImpassableLand = rmCreateTerrainDistanceConstraint("TC avoid badlands", "land", false, 20.0);
+	if(cNumberNonGaiaPlayers == 2) {
+		for(p = 1; <= cNumberNonGaiaPlayers) {
 
-	if(cNumberNonGaiaPlayers == 2){
-		for(p = 1; <= cNumberNonGaiaPlayers){
-
-			//Add a new FairLoc every time. This will have to be removed before the next FairLoc is created.
-			id=rmAddFairLoc("Settlement", false, true, 60, 65, 40, 16);
+			// Close Settlement
+			id = rmAddFairLoc("Settlement", false, true, 60, 65, 40, 16);
 			rmAddFairLocConstraint(id, TCavoidImpassableLand);
 			rmAddFairLocConstraint(id, TCavoidSettlement);
 			rmAddFairLocConstraint(id, TCavoidStart);
-
 			if(rmPlaceFairLocs()) {
-				id=rmCreateObjectDef("close settlement"+p);
+				id = rmCreateObjectDef("close settlement" + p);
 				rmAddObjectDefItem(id, "Settlement", 1, 0.0);
 				rmPlaceObjectDefAtLoc(id, p, rmFairLocXFraction(p, 0), rmFairLocZFraction(p, 0), 1);
-				int settleArea = rmCreateArea("settlement area"+p, rmAreaID("Player"+p));
+				int settleArea = rmCreateArea("settlement area" + p, rmAreaID("Player" + p));
 				rmSetAreaLocation(settleArea, rmFairLocXFraction(p, 0), rmFairLocZFraction(p, 0));
 				rmSetAreaSize(settleArea, 0.01, 0.01);
 				rmSetAreaTerrainType(settleArea, "SandC");
@@ -374,22 +383,19 @@ void main(void) {
 				rmAddAreaTerrainLayer(settleArea, "SandC", 16, 24);
 				rmBuildArea(settleArea);
 			}
-			//Remove the FairLoc that we just created
 			rmResetFairLocs();
 
-			//Do it again.
-			//Add a new FairLoc every time. This will have to be removed at the end of the block.
-			id=rmAddFairLoc("Settlement", true, false,  rmXFractionToMeters(0.29), rmXFractionToMeters(0.32), 40, 16);
+			// Far Settlement
+			id = rmAddFairLoc("Settlement", true, false, rmXFractionToMeters(0.29), rmXFractionToMeters(0.32), 40, 16);
 			rmAddFairLocConstraint(id, TCavoidSettlement);
 			rmAddFairLocConstraint(id, TCavoidImpassableLand);
 			rmAddFairLocConstraint(id, TCavoidStart);
 			rmAddFairLocConstraint(id, TCavoidWater);
-
 			if(rmPlaceFairLocs()) {
-				id=rmCreateObjectDef("far settlement"+p);
+				id = rmCreateObjectDef("far settlement" + p);
 				rmAddObjectDefItem(id, "Settlement", 1, 0.0);
 				rmPlaceObjectDefAtLoc(id, p, rmFairLocXFraction(p, 0), rmFairLocZFraction(p, 0), 1);
-				int settlementArea = rmCreateArea("settlement_area_"+p);
+				int settlementArea = rmCreateArea("settlement_area_" + p);
 				rmSetAreaLocation(settlementArea, rmFairLocXFraction(p, 0), rmFairLocZFraction(p, 0));
 				rmSetAreaSize(settlementArea, 0.01, 0.01);
 				rmSetAreaTerrainType(settlementArea, "SandC");
@@ -398,58 +404,63 @@ void main(void) {
 				rmAddAreaTerrainLayer(settlementArea, "SandC", 16, 24);
 				rmBuildArea(settlementArea);
 			}
-			rmResetFairLocs();	//Reset the data so that the next player doesn't place an extra TC.
+			rmResetFairLocs();
 		}
-	} else {
-		for(p = 1; <= cNumberNonGaiaPlayers){
+	}
+	else {
+		for(p = 1; <= cNumberNonGaiaPlayers) {
 
-			closeID=rmCreateObjectDef("close settlement"+p);
+			// Close Settlement
+			closeID = rmCreateObjectDef("close settlement"+p);
 			rmAddObjectDefItem(closeID, "Settlement", 1, 0.0);
 			rmAddObjectDefConstraint(closeID, TCavoidSettlement);
 			rmAddObjectDefConstraint(closeID, TCavoidStart);
 			rmAddObjectDefConstraint(closeID, TCavoidImpassableLand);
-			for(attempt = 4; < 10){
+			for(attempt = 4; < 10) {
 				rmPlaceObjectDefAtLoc(closeID, p, rmGetPlayerX(p), rmGetPlayerZ(p), 1);
-				if(rmGetNumberUnitsPlaced(closeID) > 0){
+				if(rmGetNumberUnitsPlaced(closeID) > 0) {
 					break;
 				}
-				rmSetObjectDefMaxDistance(closeID, 10*attempt);
+				rmSetObjectDefMaxDistance(closeID, 10 * attempt);
 			}
 
-			farID=rmCreateObjectDef("far settlement"+p);
+			// Far Settlement
+			farID = rmCreateObjectDef("far settlement" + p);
 			rmAddObjectDefItem(farID, "Settlement", 1, 0.0);
 			rmAddObjectDefConstraint(farID, TCavoidImpassableLand);
 			rmAddObjectDefConstraint(farID, TCavoidStart);
 			rmAddObjectDefConstraint(farID, TCavoidSettlement);
-			for(attempt = 6; < 15){
+			for(attempt = 6; < 15) {
 				rmPlaceObjectDefAtLoc(farID, p, rmGetPlayerX(p), rmGetPlayerZ(p), 1);
-				if(rmGetNumberUnitsPlaced(farID) > 0){
+				if(rmGetNumberUnitsPlaced(farID) > 0) {
 					break;
 				}
-				rmSetObjectDefMaxDistance(farID, 10*attempt);
+				rmSetObjectDefMaxDistance(farID, 10 * attempt);
 			}
 		}
-	} rmResetFairLocs();
+	}
+	rmResetFairLocs();
 
-	if(cMapSize == 2){
-		//And one last time if Giant.
-		id=rmAddFairLoc("Settlement", false, true,  rmXFractionToMeters(0.3), rmXFractionToMeters(0.4), 70, 16);
+	// Repeat for Giant Map
+	if(cMapSize == 2) {
+
+		// Close FairLocs
+		id = rmAddFairLoc("Settlement", false, true,  rmXFractionToMeters(0.3), rmXFractionToMeters(0.4), 70, 16);
+		rmAddFairLocConstraint(id, TCavoidSettlement);
+		rmAddFairLocConstraint(id, TCavoidStart);
+		rmAddFairLocConstraint(id, TCavoidImpassableLand);
+		id = rmAddFairLoc("Settlement", false, false,  rmXFractionToMeters(0.35), rmXFractionToMeters(0.4), 70, 16);
 		rmAddFairLocConstraint(id, TCavoidSettlement);
 		rmAddFairLocConstraint(id, TCavoidStart);
 		rmAddFairLocConstraint(id, TCavoidImpassableLand);
 
-		id=rmAddFairLoc("Settlement", false, false,  rmXFractionToMeters(0.35), rmXFractionToMeters(0.4), 70, 16);
-		rmAddFairLocConstraint(id, TCavoidSettlement);
-		rmAddFairLocConstraint(id, TCavoidStart);
-		rmAddFairLocConstraint(id, TCavoidImpassableLand);
-
-		if(rmPlaceFairLocs()){
-			for(p = 1; <= cNumberNonGaiaPlayers){
-				for(FL = 0; < 2){
-					id=rmCreateObjectDef("Giant settlement_"+p+"_"+FL);
+		// Create Settlements
+		if(rmPlaceFairLocs()) {
+			for(p = 1; <= cNumberNonGaiaPlayers) {
+				for(FL = 0; < 2) {
+					id = rmCreateObjectDef("Giant settlement_" + p + "_" + FL);
 					rmAddObjectDefItem(id, "Settlement", 1, 1.0);
-
-					int settlementArea2 = rmCreateArea("other_settlement_area_"+p+"_"+FL);
+					int settlementArea2 = rmCreateArea("other_settlement_area_" + p + "_" + FL);
 					rmSetAreaLocation(settlementArea2, rmFairLocXFraction(p, FL), rmFairLocZFraction(p, FL));
 					rmSetAreaSize(settlementArea2, 0.005, 0.005);
 					rmSetAreaTerrainType(settlementArea2, "SandC");
@@ -460,39 +471,41 @@ void main(void) {
 					rmPlaceObjectDefAtAreaLoc(id, p, settlementArea2);
 				}
 			}
-		} else {
-			for(p = 1; <= cNumberNonGaiaPlayers){
+		}
 
-				farID=rmCreateObjectDef("giant settlement"+p);
+		// Create Settlements
+		else {
+			for(p = 1; <= cNumberNonGaiaPlayers) {
+				farID = rmCreateObjectDef("giant settlement" + p);
 				rmAddObjectDefItem(farID, "Settlement", 1, 0.0);
 				rmAddObjectDefConstraint(farID, TCavoidImpassableLand);
 				rmAddObjectDefConstraint(farID, TCavoidStart);
 				rmAddObjectDefConstraint(farID, TCavoidSettlement);
-				for(attempt = 4; < 12){
+				for(attempt = 4; < 12) {
 					rmPlaceObjectDefAtLoc(farID, p, rmGetPlayerX(p), rmGetPlayerZ(p), 1);
-					if(rmGetNumberUnitsPlaced(farID) > 0){
+					if(rmGetNumberUnitsPlaced(farID) > 0) {
 						break;
 					}
-					rmSetObjectDefMaxDistance(farID, 10*attempt);
+					rmSetObjectDefMaxDistance(farID, 10 * attempt);
 				}
-
-				farID=rmCreateObjectDef("giant2 settlement"+p);
+				farID = rmCreateObjectDef("giant2 settlement" + p);
 				rmAddObjectDefItem(farID, "Settlement", 1, 0.0);
 				rmAddObjectDefConstraint(farID, TCavoidImpassableLand);
 				rmAddObjectDefConstraint(farID, TCavoidStart);
 				rmAddObjectDefConstraint(farID, TCavoidSettlement);
-				for(attempt = 6; < 15){
+				for(attempt = 6; < 15) {
 					rmPlaceObjectDefAtLoc(farID, p, rmGetPlayerX(p), rmGetPlayerZ(p), 1);
 					if(rmGetNumberUnitsPlaced(farID) > 0){
 						break;
 					}
-					rmSetObjectDefMaxDistance(farID, 10*attempt);
+					rmSetObjectDefMaxDistance(farID, 10 * attempt);
 				}
 			}
 		}
 	}
 
-	rmSetStatusText("",0.53);
+	// Loading Status
+	rmSetStatusText("", 0.53);
 
 	/* ************************** */
 	/* Section 9 Starting Objects */
