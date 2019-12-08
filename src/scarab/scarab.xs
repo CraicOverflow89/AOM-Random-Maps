@@ -45,7 +45,7 @@ void main(void) {
 	/* Section 3 Global Constraints */
 	/* **************************** */
 
-	// For Areas and Objects. Local Constraints should be defined right before they are used.
+	// Create Contraints
 	int playerConstraint = rmCreateClassDistanceConstraint("stay away from players", classPlayer, 10.0);
 	int shortAvoidImpassableLand = rmCreateTerrainDistanceConstraint("short avoid impassable land", "land", false, 6.0);
 
@@ -127,12 +127,12 @@ void main(void) {
 	}
 	float percentPerPlayer = 0.75 / cNumberNonGaiaPlayers;
 	float teamSize = 0;
-	for(i = 0; < cNumberTeams) {
+	for(x = 0; < cNumberTeams) {
 
 		// Team Area
-		int teamID = rmCreateArea("team" + i);
-		rmSetTeamArea(i, teamID);
-		teamSize = percentPerPlayer*rmGetNumberPlayersOnTeam(i);
+		int teamID = rmCreateArea("team" + x);
+		rmSetTeamArea(x, teamID);
+		teamSize = percentPerPlayer*rmGetNumberPlayersOnTeam(x);
 		rmSetAreaSize(teamID, teamSize * 0.9, teamSize * 1.1);
 		rmSetAreaWarnFailure(teamID, false);
 		rmSetAreaTerrainType(teamID, "SandA");
@@ -149,19 +149,19 @@ void main(void) {
 		rmSetAreaHeightBlend(teamID, 2);
 		rmAddAreaConstraint(teamID, teamConstraint);
 		rmAddAreaConstraint(teamID, teamEdgeConstraint);
-		rmSetAreaLocTeam(teamID, i);
+		rmSetAreaLocTeam(teamID, x);
 		rmAddConnectionArea(connectionID, teamID);
 		if(secondConnectionExists == 1.0) {
 			rmAddConnectionArea(alternateConnection, teamID);
 		}
-		rmEchoInfo("Team area" + i);
+		rmEchoInfo("Team area" + x);
 	}
 
 	// Patch Constraints
 	int patchConstraint = rmCreateClassDistanceConstraint("patch vs patch", patchClass, 10);
 	int failCount = 0;
-	for(j = 0; < cNumberNonGaiaPlayers * 60 * mapSizeMultiplier) {
-		int rockPatch=rmCreateArea("rock patch" + j);
+	for(x = 0; < cNumberNonGaiaPlayers * 60 * mapSizeMultiplier) {
+		int rockPatch = rmCreateArea("rock patch" + x);
 		rmSetAreaSize(rockPatch, rmAreaTilesToFraction(50), rmAreaTilesToFraction(100));
 		rmSetAreaWarnFailure(rockPatch, false);
 		rmSetAreaBaseHeight(rockPatch, rmRandFloat(8.0, 10.0));
@@ -172,8 +172,8 @@ void main(void) {
 		rmSetAreaMinBlobDistance(rockPatch, 5.0);
 		rmSetAreaMaxBlobDistance(rockPatch, 5.0 * mapSizeMultiplier);
 		rmSetAreaCoherence(rockPatch, 0.3);
-		if(rmBuildArea(rockPatch )== false) {
-			failCount++;
+		if(rmBuildArea(rockPatch) == false) {
+			failCount ++;
 			if(failCount == 3 * mapSizeMultiplier) {
 				break;
 			}
@@ -202,10 +202,10 @@ void main(void) {
 	float playerFraction = rmAreaTilesToFraction(2500);
 
 	// Player Areas
-	for(i = 1; <cNumberPlayers){
-		int id = rmCreateArea("Player" + i, rmAreaID("team" + rmGetPlayerTeam(i)));
-		rmEchoInfo("Player" + i + "team" + rmGetPlayerTeam(i));
-		rmSetPlayerArea(i, id);
+	for(x = 1; <cNumberPlayers) {
+		int id = rmCreateArea("Player" + x, rmAreaID("team" + rmGetPlayerTeam(x)));
+		rmEchoInfo("Player" + x + "team" + rmGetPlayerTeam(x));
+		rmSetPlayerArea(x, id);
 		rmSetAreaSize(id, 0.9 * playerFraction, 1.1 * playerFraction);
 		rmAddAreaToClass(id, classPlayer);
 		rmSetAreaWarnFailure(id, false);
@@ -216,7 +216,7 @@ void main(void) {
 		rmSetAreaCoherence(id, 0.0);
 		rmAddAreaConstraint(id, playerConstraint);
 		rmAddAreaConstraint(id, shortAvoidImpassableLand);
-		rmSetAreaLocPlayer(id, i);
+		rmSetAreaLocPlayer(id, x);
 		rmSetAreaTerrainType(id, "SandC");
 		rmAddAreaTerrainLayer(id, "SandC", 4, 12);
 		rmAddAreaTerrainLayer(id, "SandA", 0, 4);
@@ -270,7 +270,7 @@ void main(void) {
 	int avoidBuildings = rmCreateTypeDistanceConstraint("avoid buildings", "Building", 20.0);
 	failCount = 0;
 	for(x = 0; < numTries) {
-		int elevID=rmCreateArea("wrinkle" + x);
+		int elevID = rmCreateArea("wrinkle" + x);
 		rmSetAreaSize(elevID, rmAreaTilesToFraction(15), rmAreaTilesToFraction(120));
 		rmSetAreaWarnFailure(elevID, false);
 		rmSetAreaBaseHeight(elevID, rmRandFloat(1.0, 3.0));
