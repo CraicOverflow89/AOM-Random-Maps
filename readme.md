@@ -11,20 +11,10 @@ The `cof89_lib.xs` file is a library that is used by all random maps and should 
 
 Append the contents of the `en-language.txt` file to the existing file in the `/language/en/` directory.
 
-### Notes on XS
-
-For those unfamiliar, this is basically C++ but with some mandatory syntax (eg: _for_ loops);
-
-```
-// This Works
-for(x = 1; < cNumberPlayers)
-
-// This Errors
-for(x = 1; x < cNumberPlayers; x ++)
-```
-
-See [this post](http://aom.heavengames.com/cgi-bin/forums/display.cgi?action=ct&f=19,26905,0,10) for more information.
-
 ### Disclaimer
 
 I do not own Age of Mythology.
+
+### See Also
+
+ - [XS Extension for Visual Studio Code](https://github.com/CraicOverflow89/VSC-XS-Language)
