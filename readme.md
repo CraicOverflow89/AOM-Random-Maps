@@ -17,4 +17,5 @@ I do not own Age of Mythology.
 
 ### See Also
 
+ - [AoM:EE Texture Conversion Tool](http://aom.heavengames.com/downloads/showfile.php?fileid=10791)
  - [XS Extension for Visual Studio Code](https://github.com/CraicOverflow89/VSC-XS-Language)
