@@ -13,7 +13,7 @@ Append the contents of the `en-language.txt` file to the existing file in the `/
 
 ### Disclaimer
 
-I do not own Age of Mythology.
+I do not claim to own the rights to Age of Mythology.
 
 ### See Also
 
