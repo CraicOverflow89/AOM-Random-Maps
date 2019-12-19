@@ -1,3 +1,5 @@
 // CUSTOM MAPS
-99001		"Scarab"
-99002		"Sandstone cliffs strangle expanses of desert where deadly scarabs lurk."
+99001 "Scarab"
+99002 "Scarab: Sandstone cliffs strangle expanses of desert where deadly scarabs lurk."
+99003 "Niflheim"
+99004 "Niflheim: Few sanctuaries rise above the mist and frozen rivers."
