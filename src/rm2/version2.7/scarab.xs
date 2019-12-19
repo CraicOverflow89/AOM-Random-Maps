@@ -31,6 +31,7 @@ void main(void) {
 	/* Section 2 Classes */
 	/* ***************** */
 
+	// Create Classes
 	int classForest = rmDefineClass("forest");
 	int classPlayer = rmDefineClass("player");
 	int classStartingSettlement = rmDefineClass("starting settlement");
