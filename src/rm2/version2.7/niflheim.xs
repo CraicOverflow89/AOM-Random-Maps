@@ -70,28 +70,29 @@ void main(void) {
 	/* Section 4 Map Outline */
 	/* ********************* */
 
+	// Player Placement
 	rmPlacePlayersSquare(0.3, 0.05, 0.05);
 	rmRecordPlayerLocations();
 
 	// Create Lake
-	int centerLake=rmCreateArea("lake in the middle");
+	int centerLake = rmCreateArea("lake in the middle");
 	rmSetAreaSize(centerLake, 0.03, 0.04);
 	rmSetAreaLocation(centerLake, 0.5, 0.5);
 	rmSetAreaWaterType(centerLake, "Norwegian Sea");
 	// NOTE: this should maybe become land patch of IceA and the like (see Ghost Lake map)
 	rmSetAreaBaseHeight(centerLake, 0.0);
-	rmSetAreaMinBlobs(centerLake, 5*mapSizeMultiplier);
-	rmSetAreaMaxBlobs(centerLake, 7*mapSizeMultiplier);
+	rmSetAreaMinBlobs(centerLake, 5 * mapSizeMultiplier);
+	rmSetAreaMaxBlobs(centerLake, 7 * mapSizeMultiplier);
 	rmSetAreaMinBlobDistance(centerLake, 16.0);
-	rmSetAreaMaxBlobDistance(centerLake, 20.0*mapSizeMultiplier);
+	rmSetAreaMaxBlobDistance(centerLake, 20.0 * mapSizeMultiplier);
 	rmSetAreaSmoothDistance(centerLake, 50);
 	rmSetAreaCoherence(centerLake, 0.25);
 	rmAddAreaToClass(centerLake, classLake);
 	rmBuildArea(centerLake);
 
-	// Connections
-	int classConnection=rmDefineClass("connection");
-	int rampID=rmCreateConnection("ramps");
+	// Create Connection
+	int classConnection = rmDefineClass("connection");
+	int rampID = rmCreateConnection("ramps");
 	rmSetConnectionType(rampID, cConnectAreas, false, 0.70);
 	rmSetConnectionWidth(rampID, 12, 2);
 	rmSetConnectionHeightBlend(rampID, 7.0);
@@ -100,9 +101,9 @@ void main(void) {
 	rmAddConnectionTerrainReplacement(rampID, "cliffNorseB", "SnowGrass50");
 	rmAddConnectionToClass(rampID, classConnection);
 
-	// Set up temp areas so we can build the connections.
-	for(i=1; <cNumberPlayers){
-		int tempID=rmCreateArea("TempPlayer"+i);
+	// Create Areas
+	for(i = 1; < cNumberPlayers) {
+		int tempID = rmCreateArea("TempPlayer" + i);
 		rmSetAreaSize(tempID, 0.01, 0.01);
 		rmAddConnectionArea(rampID, tempID);
 		rmSetAreaLocPlayer(tempID, i);
@@ -119,7 +120,8 @@ void main(void) {
 	/* Section 5 Player Areas */
 	/* ********************** */
 
-	for(i=1; <cNumberPlayers){
+	// Add Resources
+	for(i = 1; < cNumberPlayers) {
 		rmAddPlayerResource(i, "Food", 300);
 		rmAddPlayerResource(i, "Wood", 200);
 		rmAddPlayerResource(i, "Gold", 100);
@@ -134,10 +136,14 @@ void main(void) {
 		rmAddAreaToClass(id, classPlayer);
 		rmSetAreaMinBlobs(id, 2);
 		rmSetAreaMaxBlobs(id, 5);
-		rmSetAreaMinBlobDistance(id, 20.0*mapSizeMultiplier);
-		rmSetAreaMaxBlobDistance(id, 30.0*mapSizeMultiplier);
+		rmSetAreaMinBlobDistance(id, 20.0 * mapSizeMultiplier);
+		rmSetAreaMaxBlobDistance(id, 30.0 * mapSizeMultiplier);
 		rmSetAreaCoherence(id, 0.7);
 		// NOTE: need to update terrain with grass around this area
+		rmSetAreaTerrainType(id, "SnowGrass75");
+		rmAddAreaTerrainLayer(id, "SnowGrass50", 1, 2);
+		rmAddAreaTerrainLayer(id, "SnowGrass25", 0, 1);
+		// NOTE: the above needs testing and tweaking
 		rmSetAreaCliffType(id, "Norse");
 		rmSetAreaCliffEdge(id, 2, 0.45, 0.2, 1.0, 1);
 		rmSetAreaCliffPainting(id, false, true, true, 1.5, true);
