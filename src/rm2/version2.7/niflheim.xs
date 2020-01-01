@@ -7,7 +7,7 @@ include "cof89_lib.xs";
 
 void main(void) {
 	// NOTE: update all herdables and huntables
-	//       add hawks
+	//       add hawks in sky and walrus around central area
 	//       lots of wolves roam around the lower areas
 	//       polar bear predators
 	//       grass on elevated player area
@@ -112,7 +112,8 @@ void main(void) {
 		rmAddAreaConstraint(tempID, playerConstraint);
 	}
 
-	rmSetStatusText("",0.26);
+	// Loading Status
+	loadStatus(0.26);
 
 	/* ********************** */
 	/* Section 5 Player Areas */
@@ -150,8 +151,8 @@ void main(void) {
 	// Build the areas.
 	rmBuildAllAreas();
 
-	// Loading bar 33% 
-	rmSetStatusText("",0.33);
+	// Loading Status
+	loadStatus(0.33);
 
 	/* *********************** */
 	/* Section 6 Map Specifics */
@@ -260,7 +261,8 @@ void main(void) {
 		}
 	}
 
-	rmSetStatusText("",0.40);
+	// Loading Status
+	loadStatus(0.40);
 
 	/* **************************** */
 	/* Section 7 Object Constraints */
@@ -282,7 +284,8 @@ void main(void) {
 	int shortPlayerConstraint=rmCreateClassDistanceConstraint("short stay away from players", classPlayer, 4.0);
 	int forestAvoidForest = rmCreateClassDistanceConstraint("forest v forest", rmClassID("forest"), 35.0);
 
-	rmSetStatusText("",0.46);
+	// Loading Status
+	loadStatus(0.46);
 
 	/* ********************************* */
 	/* Section 8 Fair Location Placement */
@@ -427,7 +430,8 @@ void main(void) {
 		}
 	}
 
-	rmSetStatusText("",0.53);
+	// Loading Status
+	loadStatus(0.53);
 
 	/* ************************** */
 	/* Section 9 Starting Objects */
@@ -463,7 +467,8 @@ void main(void) {
 	rmAddObjectDefConstraint(stragglerTreeID, rmCreateTypeDistanceConstraint("tree avoid everything", "all", 3.0));
 	rmPlaceObjectDefPerPlayer(stragglerTreeID, false, rmRandInt(2, 5));
 
-	rmSetStatusText("",0.60);
+	// Loading Status
+	loadStatus(0.60);
 
 	/* *************************** */
 	/* Section 10 Starting Forests */
@@ -514,7 +519,8 @@ void main(void) {
 		}
 	}
 
-	rmSetStatusText("", 0.66);
+	// Loading Status
+	loadStatus(0.66);
 
 	/* ************************* */
 	/* Section 11 Medium Objects */
@@ -541,7 +547,8 @@ void main(void) {
 	rmAddObjectDefConstraint(mediumGoatsID, stayInCenter);
 	rmPlaceObjectDefPerPlayer(mediumGoatsID, false, rmRandInt(1,2));
 
-	rmSetStatusText("",0.73);
+	// Loading Status
+	loadStatus(0.273;
 
 	/* ********************** */
 	/* Section 12 Far Objects */
@@ -642,7 +649,8 @@ void main(void) {
 	rmAddObjectDefConstraint(fishID, fishLand);
 	rmPlaceObjectDefAtLoc(fishID, 0, 0.5, 0.5, rmRandInt(1,4));
 
-	rmSetStatusText("",0.80);
+	// Loading Status
+	loadStatus(0.80);
 
 	/* ************************ */
 	/* Section 13 Giant Objects */
@@ -703,7 +711,8 @@ void main(void) {
 		rmPlaceObjectDefAtLoc(giantRelixID, 0, 0.5, 0.5, cNumberNonGaiaPlayers);
 	}
 
-	rmSetStatusText("",0.86);
+	// Loading Status
+	loadStatus(0.86);
 
 	/* *************************** */
 	/* Section 14 Map Fill Forests */
@@ -755,7 +764,8 @@ void main(void) {
 		}
 	}
 
-	rmSetStatusText("",0.93);
+	// Loading Status
+	loadStatus(0.93);
 
 	/* ********************************* */
 	/* Section 15 Beautification Objects */
@@ -787,5 +797,6 @@ void main(void) {
 	rmSetObjectDefMaxDistance(decorationID, rmXFractionToMeters(0.5));
 	rmPlaceObjectDefAtLoc(decorationID, 0, 0.5, 0.5, 2*cNumberNonGaiaPlayers*mapSizeMultiplier);
 
-	rmSetStatusText("",1.0);
+	// Loading Status
+	loadStatus(1.00);
 }
