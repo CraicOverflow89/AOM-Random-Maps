@@ -5,9 +5,7 @@ Random map scripts for Age of Mythology.
 
 ### Installation
 
-All files in the `src` directory can be copied directly into the game root, other than the language file.
-
-You need to **append** the contents of the `en-language.txt` file **to the existing file** in the `/language/en/` directory.
+All files in the `src` directory can be copied directly into the game root (backup first so you can easily uninstall).
 
 ### Disclaimer
 
