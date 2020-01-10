@@ -1,0 +1,8 @@
+// Game Directory
+root = "C:/Program Files (x86)/Steam/steamapps/common/Age of Mythology"
+
+// Copy Contents
+File("src").copy(root)
+
+// Build Done
+echo("Transfer Completed")
